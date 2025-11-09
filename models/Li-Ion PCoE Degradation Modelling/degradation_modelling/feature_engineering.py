@@ -19,7 +19,7 @@ def create_rolling_features(df: pd.DataFrame, window_size: int = 15) -> pd.DataF
     df = df.copy()
     df = df.sort_values(['battery_id', 'cycle_index']).reset_index(drop=True)
     
-    # Features to compute rolling statistics for
+    # Features to compute for rolling statistics 
     feature_cols = ['capacity', 'voltage_mean', 'temperature_mean']
     
     for col in feature_cols:
