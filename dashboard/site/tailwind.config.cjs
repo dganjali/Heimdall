@@ -8,8 +8,8 @@ module.exports = {
     extend: {
       colors: {
         background: '#0B0C10',
-        neon: '#FF00D0',
-        lime: '#A8FF00'
+        accent: '#60A5FA', // muted blue accent for sleeker look
+        emerald: '#10B981' // used for subtle green touches
       }
     },
   },

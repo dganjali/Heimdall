@@ -7,18 +7,30 @@ import pygame
 import cv2
 import serial
 import sys
+import argparse
+import glob
 import time
 from threading import Thread, Lock
 import numpy as np
 
 # Configuration
-SERIAL_PORT = '/dev/ttyACM0'  # Change to your Arduino port (COM3 on Windows)
+SERIAL_PORT = '/dev/tty.usbserial-1320'  # Change to your Arduino port (COM3 on Windows)
 BAUD_RATE = 9600
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 CAMERA_WIDTH = 640
 CAMERA_HEIGHT = 480
 FPS = 60
+
+
+def list_serial_ports():
+    """Return a list of candidate serial device paths on macOS/Linux."""
+    ports = []
+    ports += glob.glob('/dev/tty.*')
+    ports += glob.glob('/dev/cu.*')
+    # dedupe and sort
+    ports = sorted(list(set(ports)))
+    return ports
 
 # Servo configuration
 NUM_SERVOS = 5
@@ -68,6 +80,17 @@ class RobotArmController:
             return True
         except Exception as e:
             print(f"✗ Failed to connect to Arduino: {e}")
+            # List available serial devices to help debugging
+            try:
+                ports = list_serial_ports()
+                if ports:
+                    print("Available serial devices:")
+                    for p in ports:
+                        print(f"  - {p}")
+                else:
+                    print("No serial devices found under /dev/tty.* or /dev/cu.*")
+            except Exception:
+                pass
             self.connected = False
             return False
     
@@ -394,9 +417,15 @@ def main():
     print("JADE Robotic Arm - Interactive Control Interface")
     print("=" * 60)
     
+    # Parse CLI arguments (allow user to override serial port / baud)
+    parser = argparse.ArgumentParser(description='JADE Robotic Arm - Control Interface')
+    parser.add_argument('-p', '--port', default=SERIAL_PORT, help='Serial port device (e.g. /dev/tty.usbserial-1320)')
+    parser.add_argument('-b', '--baud', type=int, default=BAUD_RATE, help='Baud rate for serial communication')
+    args = parser.parse_args()
+
     # Initialize controller
-    print("\n[1/3] Initializing Arduino connection...")
-    controller = RobotArmController(SERIAL_PORT, BAUD_RATE)
+    print(f"\n[1/3] Initializing Arduino connection on {args.port} @ {args.baud}...")
+    controller = RobotArmController(args.port, args.baud)
     
     # Try to connect (non-blocking if fails)
     controller.connect()

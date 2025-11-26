@@ -4,8 +4,8 @@
 
 :root {
   --bg: #0B0C10;
-  --neon: #FF00D0;
-  --lime: #A8FF00;
+  --accent: #60A5FA;
+  --emerald: #10B981;
 }
 
 html,body,#root{
@@ -25,6 +25,7 @@ body{
   border: 1px solid rgba(255,255,255,0.06);
 }
 
-.glow-neon{
-  box-shadow: 0 6px 28px rgba(255,0,208,0.12), 0 0 8px rgba(255,0,208,0.06) inset;
+.glow-accent{
+  box-shadow: 0 6px 28px rgba(96,165,250,0.08), 0 0 6px rgba(96,165,250,0.04) inset;
 }
+
